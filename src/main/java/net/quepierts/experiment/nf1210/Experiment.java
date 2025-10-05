@@ -14,5 +14,6 @@ public class Experiment {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Experiment(IEventBus modEventBus, ModContainer modContainer) {
+
     }
 }

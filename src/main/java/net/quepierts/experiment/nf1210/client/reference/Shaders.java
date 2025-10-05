@@ -31,12 +31,12 @@ public class Shaders {
 
         WHITE = INSTANCES.register(
                 "white",
-                DefaultVertexFormat.POSITION_TEX
+                DefaultVertexFormat.BLIT_SCREEN
         );
 
         RAY_MARCHING = INSTANCES.register(
                 "ray_marching",
-                DefaultVertexFormat.POSITION_TEX,
+                DefaultVertexFormat.BLIT_SCREEN,
                 RayMarchingInstance::new
         );
     }

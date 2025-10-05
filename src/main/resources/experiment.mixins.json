@@ -3,6 +3,9 @@
   "package": "net.quepierts.experiment.nf1210.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
+  "client": [
+    "client.MinecraftClientMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   },
