@@ -19,6 +19,10 @@ public class Shaders {
 
     public static final ShaderHolder<RayMarchingInstance> RAY_MARCHING;
 
+    public static final ShaderHolder<RayMarchingInstance> RAY_MARCHING_VOX;
+
+    public static final ShaderHolder<ShaderInstance> COMBINE;
+
     private static final ShaderList INSTANCES;
 
     @SubscribeEvent
@@ -35,9 +39,21 @@ public class Shaders {
         );
 
         RAY_MARCHING = INSTANCES.register(
-                "ray_marching",
+                "ray_marching/simple",
                 DefaultVertexFormat.BLIT_SCREEN,
                 RayMarchingInstance::new
         );
+
+        RAY_MARCHING_VOX = INSTANCES.register(
+                "ray_marching/voxel",
+                DefaultVertexFormat.BLIT_SCREEN,
+                RayMarchingInstance::new
+        );
+
+        COMBINE = INSTANCES.register(
+                "combine",
+                DefaultVertexFormat.BLIT_SCREEN,
+                ShaderInstance::new
+         );
     }
 }

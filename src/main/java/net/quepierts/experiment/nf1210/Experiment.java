@@ -1,5 +1,6 @@
 package net.quepierts.experiment.nf1210;
 
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -15,5 +16,9 @@ public class Experiment {
 
     public Experiment(IEventBus modEventBus, ModContainer modContainer) {
 
+    }
+
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

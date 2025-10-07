@@ -16,6 +16,8 @@ public class RayMarchingInstance extends ShaderInstance {
     public final AbstractUniform INVERSE_PROJECTION_MATRIX;
     public final AbstractUniform CAMERA_POSITION;
 
+    public final int LOC_VOXEL_SAMPLER;
+
     public RayMarchingInstance(
             @NotNull ResourceProvider provider,
             @NotNull ResourceLocation location,
@@ -23,9 +25,11 @@ public class RayMarchingInstance extends ShaderInstance {
     ) throws IOException {
         super(provider, location, format);
 
-        INVERSE_VIEW_MATRIX = this.safeGetUniform("InverseViewMatrix");
-        INVERSE_PROJECTION_MATRIX = this.safeGetUniform("InverseProjectionMatrix");
-        CAMERA_POSITION = this.safeGetUniform("CameraPosition");
+        INVERSE_VIEW_MATRIX = this.safeGetUniform("uInverseViewMatrix");
+        INVERSE_PROJECTION_MATRIX = this.safeGetUniform("uInverseProjectionMatrix");
+        CAMERA_POSITION = this.safeGetUniform("uCameraPosition");
+
+        LOC_VOXEL_SAMPLER = Uniform.glGetUniformLocation(this.getId(), "uVoxelSampler");
     }
 
 }

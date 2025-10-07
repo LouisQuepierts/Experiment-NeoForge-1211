@@ -2,25 +2,24 @@
 
 #define STEP (256)
 #define near (0.05)
-#define box (10.5)
 #define uDensity (0.943)
 
-uniform sampler2D ScreenSampler;
-uniform sampler2D DepthSampler;
+uniform sampler2D uScreenSampler;
+uniform sampler2D uDepthSampler;
 
-uniform mat4 InverseProjectionMatrix;
-uniform mat4 InverseViewMatrix;
-uniform vec3 CameraPosition;
+uniform mat4 uInverseProjectionMatrix;
+uniform mat4 uInverseViewMatrix;
+uniform vec3 uCameraPosition;
 
 in vec2 texCoord;
 out vec4 fragColor;
 
 vec4 getWorldSpacePosition(float depth, vec2 uv) {
     vec4 screenPos = vec4(texCoord, depth, 1.0);
-    vec4 viewPos = InverseProjectionMatrix * (screenPos * 2.0 - 1.0);
+    vec4 viewPos = uInverseProjectionMatrix * (screenPos * 2.0 - 1.0);
     viewPos /= viewPos.w;
 
-    vec4 worldPos = InverseViewMatrix * vec4(viewPos.xyz, 1.0);
+    vec4 worldPos = uInverseViewMatrix * vec4(viewPos.xyz, 1.0);
     return worldPos;
 }
 
@@ -73,11 +72,11 @@ vec4 raymarching(vec3 pWorldPosition, vec3 pCameraPosition) {
 }
 
 void main() {
-    vec4 color = texture(ScreenSampler, texCoord);
-    float depth = texture(DepthSampler, texCoord).r;
+    vec4 color = texture(uScreenSampler, texCoord);
+    float depth = texture(uDepthSampler, texCoord).r;
 
     vec4 worldPosition = getWorldSpacePosition(depth, texCoord);
-    vec4 cloud = raymarching(worldPosition.xyz, CameraPosition);
+    vec4 cloud = raymarching(worldPosition.xyz, uCameraPosition);
     fragColor.a = 1.0;
     fragColor.rgb = color.rgb * (1.0 - cloud.a) + cloud.rgb;
 }
