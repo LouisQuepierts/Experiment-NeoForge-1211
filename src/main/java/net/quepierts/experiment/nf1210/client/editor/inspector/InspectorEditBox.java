@@ -5,24 +5,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.quepierts.experiment.nf1210.client.editor.property.Property;
 import net.quepierts.experiment.nf1210.client.editor.widget.TextField;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class InspectorEditBox extends InspectorModifyWidget<String> {
     private final TextField editBox;
 
-    public InspectorEditBox(Component message, Supplier<String> getter, Consumer<String> setter) {
-        super(36, message, getter, setter);
+    public InspectorEditBox(Component message, Property<String> property) {
+        super(36, message, property);
 
         this.editBox = new TextField(Minecraft.getInstance().font, 0, 16, 100, 20, message);
-        this.editBox.setValue(getter.get());
-        this.editBox.setResponder(setter);
+        this.editBox.setValue(property.getObject());
+        this.editBox.setResponder(property::setObject);
     }
 
     @Override
-    public void render(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    protected void onRender(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, this.message, 0, 4, 0xffffffff);
 
@@ -68,7 +66,7 @@ public class InspectorEditBox extends InspectorModifyWidget<String> {
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
+    public boolean onCharTyped(char codePoint, int modifiers) {
         return this.editBox.charTyped(codePoint, modifiers);
     }
 }

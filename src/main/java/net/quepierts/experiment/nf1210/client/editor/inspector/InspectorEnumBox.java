@@ -5,9 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.quepierts.experiment.nf1210.client.editor.DisplayableType;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import net.quepierts.experiment.nf1210.client.editor.property.Property;
 
 public class InspectorEnumBox<T extends DisplayableType> extends InspectorModifyWidget<T> {
     private final T[] values;
@@ -16,18 +14,18 @@ public class InspectorEnumBox<T extends DisplayableType> extends InspectorModify
 
     private T selected;
 
-    public InspectorEnumBox(Component message, Supplier<T> getter, Consumer<T> setter, T[] values) {
-        super(22, message, getter, setter);
+    public InspectorEnumBox(Component message, Property<T> property, T[] values) {
+        super(22, message, property);
         this.values = values;
-        this.selected = getter.get();
+        this.selected = property.getObject();
     }
 
     @Override
-    public void render(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    protected void onRender(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
         int buttonWidth = width / 2;
         int left = width - buttonWidth;
 
-        graphics.drawString(Minecraft.getInstance().font, this.message, 0, 8, 0xffffffff);
+        graphics.drawWordWrap(Minecraft.getInstance().font, this.message, 0, 8, left, 0xffffffff);
         RenderSystem.enableBlend();
 
         int hover = hovered ? mouseY / 20 : -1;
@@ -76,7 +74,7 @@ public class InspectorEnumBox<T extends DisplayableType> extends InspectorModify
 
             if (value != this.selected) {
                 this.selected = value;
-                this.setter.accept(value);
+                this.property.setObject(value);
             }
         }
 
@@ -90,14 +88,12 @@ public class InspectorEnumBox<T extends DisplayableType> extends InspectorModify
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean paste(InspectorWidget copy) {
+    public void onPaste(InspectorWidget copy, String clipboard) {
         if (copy instanceof InspectorEnumBox<?> box) {
             if (box.selected.getClass() == this.selected.getClass()) {
                 this.selected = (T) box.selected;
-                this.setter.accept(this.selected);
-                return true;
+                this.property.setObject(this.selected);
             }
         }
-        return false;
     }
 }

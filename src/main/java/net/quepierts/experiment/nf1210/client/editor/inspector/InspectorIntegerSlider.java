@@ -5,9 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import net.quepierts.experiment.nf1210.client.cursor.CursorManager;
+import net.quepierts.experiment.nf1210.client.cursor.CursorType;
+import net.quepierts.experiment.nf1210.client.editor.property.IntegerProperty;
 
 public class InspectorIntegerSlider extends InspectorModifyWidget<Integer> {
     private final int min;
@@ -16,18 +16,20 @@ public class InspectorIntegerSlider extends InspectorModifyWidget<Integer> {
 
     private int value;
 
-    public InspectorIntegerSlider(Component message, Supplier<Integer> getter, Consumer<Integer> setter, int min, int max, int step) {
-        super(36, message, getter, setter);
+    private boolean hover = false;
+
+    public InspectorIntegerSlider(Component message, IntegerProperty property, int min, int max, int step) {
+        super(36, message, property);
 
         this.min = min;
         this.max = max;
 
-        this.value = getter.get();
+        this.value = property.getInt();
         this.step = step;
     }
 
     @Override
-    public void render(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    protected void onRender(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, this.message, 0, 4, 0xffffffff);
 
@@ -40,12 +42,12 @@ public class InspectorIntegerSlider extends InspectorModifyWidget<Integer> {
         float interpolate = (float) (this.value - this.min) / (this.max - this.min);
         int offset = 4 + (int) (length * interpolate);
 
-        boolean hover = hovered && mouseY > 14;
+        this.hover = hovered && mouseY > 14;
         graphics.fill(0, 14, width, 34, 0xbb000000);
         graphics.fill(4, 23, width - 4, 25, 0x88ffffff);
         graphics.fill(offset, 17, offset + 2, 31, 0xffffffff);
 
-        if (hover) {
+        if (this.hover) {
             graphics.renderOutline(0, 14, width, 20, 0xffffffff);
         }
     }
@@ -56,18 +58,24 @@ public class InspectorIntegerSlider extends InspectorModifyWidget<Integer> {
             return;
         }
 
-        if (mouseX < 8 || mouseX > width - 4) {
+        if (mouseX < 4 || mouseX > width - 4) {
             return;
         }
 
-        float interpolate = Math.clamp(((float) mouseX - 8) / (width - 10), 0.0f, 1.0f);
+        CursorManager.INSTANCE.use(CursorType.POINTING);
+        float interpolate = Math.clamp(((float) mouseX - 4) / (width - 10), 0.0f, 1.0f);
         float target = (this.max - this.min) * interpolate + this.min;
         int value = Math.round(target / this.step) * this.step;
 
         if (value != this.value) {
             this.value = value;
-            this.setter.accept(value);
+            this.property.setNumber(value);
         }
+    }
+
+    @Override
+    public void onMouseReleased(double mouseX, double mouseY, int button, int width) {
+        CursorManager.INSTANCE.use(CursorType.ARROW);
     }
 
     @Override
@@ -76,23 +84,21 @@ public class InspectorIntegerSlider extends InspectorModifyWidget<Integer> {
             return;
         }
 
-        float interpolate = Math.clamp(((float) mouseX - 8) / (width - 10), 0.0f, 1.0f);
+        float interpolate = Math.clamp(((float) mouseX - 4) / (width - 10), 0.0f, 1.0f);
         float target = (this.max - this.min) * interpolate + this.min;
         int value = Math.round(target / this.step) * this.step;
 
         if (value != this.value) {
             this.value = value;
-            this.setter.accept(value);
+            this.property.setNumber(value);
         }
     }
 
     @Override
-    public boolean paste(InspectorWidget copy) {
+    public void onPaste(InspectorWidget copy, String clipboard) {
         if (copy instanceof InspectorIntegerSlider slider) {
             this.value = slider.value;
-            this.setter.accept(this.value);
-            return true;
+            this.property.setNumber(this.value);
         }
-        return false;
     }
 }

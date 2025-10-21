@@ -15,8 +15,6 @@ import java.io.IOException;
 
 @EventBusSubscriber(value = Dist.CLIENT, modid = Experiment.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Shaders {
-    public static final ShaderHolder<ShaderInstance> WHITE;
-
     public static final ShaderHolder<RayMarchingInstance> RAY_MARCHING;
 
     public static final ShaderHolder<RayMarchingInstance> RAY_MARCHING_VOX;
@@ -32,11 +30,6 @@ public class Shaders {
 
     static {
         INSTANCES = new ShaderList(Experiment.MODID);
-
-        WHITE = INSTANCES.register(
-                "white",
-                DefaultVertexFormat.BLIT_SCREEN
-        );
 
         RAY_MARCHING = INSTANCES.register(
                 "ray_marching/simple",

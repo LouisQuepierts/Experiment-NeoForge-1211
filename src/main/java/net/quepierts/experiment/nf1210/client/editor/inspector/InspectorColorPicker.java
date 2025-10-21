@@ -6,12 +6,10 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FastColor;
 import net.quepierts.experiment.nf1210.client.editor.ColorHelper;
+import net.quepierts.experiment.nf1210.client.editor.property.IntegerProperty;
 import net.quepierts.experiment.nf1210.client.editor.widget.ColorField;
 import net.quepierts.experiment.nf1210.client.editor.widget.ColorSpectrum;
 import net.quepierts.experiment.nf1210.client.editor.widget.OpacityBar;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
     private static final int HEIGHT = 90;
@@ -25,10 +23,10 @@ public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
 
     private final AbstractWidget[] children;
 
-    protected InspectorColorPicker(Component message, Supplier<Integer> getter, Consumer<Integer> setter) {
-        super(20, message, getter, setter);
+    public InspectorColorPicker(Component message, IntegerProperty property) {
+        super(20, message, property);
 
-        int argb = getter.get();
+        int argb = property.getInt();
 
         int scale = HEIGHT - 30;
         this.colorField = new ColorField(4, 24, scale);
@@ -53,7 +51,7 @@ public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    protected void onRender(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
         graphics.drawString(Minecraft.getInstance().font, this.message, 0, 6, 0xffffffff);
 
         int previewLeft = width - 20;
@@ -93,7 +91,7 @@ public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
 
                 widget.setFocused(true);
                 this.focused = widget;
-                this.setter.accept(FastColor.ARGB32.color(this.opacityBar.getOpacity(), this.colorField.getColor()));
+                this.property.setNumber(FastColor.ARGB32.color(this.opacityBar.getOpacity(), this.colorField.getColor()));
                 break;
             }
         }
@@ -129,7 +127,7 @@ public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
 
         if (this.focused != null) {
             this.focused.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
-            this.setter.accept(FastColor.ARGB32.color(this.opacityBar.getOpacity(), this.colorField.getColor()));
+            this.property.setNumber(FastColor.ARGB32.color(this.opacityBar.getOpacity(), this.colorField.getColor()));
         }
     }
 
@@ -145,7 +143,7 @@ public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
     }
 
     @Override
-    public boolean charTyped(char codePoint, int modifiers) {
+    public boolean onCharTyped(char codePoint, int modifiers) {
         for (AbstractWidget widget : this.children) {
             if (widget.isFocused()) {
                 return widget.charTyped(codePoint, modifiers);
@@ -169,15 +167,14 @@ public class InspectorColorPicker extends InspectorModifyWidget<Integer> {
     }
 
     @Override
-    public boolean paste(InspectorWidget copy) {
+    public void onPaste(InspectorWidget copy, String clipboard) {
         if (copy instanceof InspectorColorPicker picker) {
             this.opacityBar.setOpacity(picker.opacityBar.getOpacity());
             this.opacityBar.setColor(picker.opacityBar.getColor());
             this.colorSpectrum.setHue(picker.colorSpectrum.getHue());
-            this.colorField.setColor(picker.colorField.getColor());this.setter.accept(FastColor.ARGB32.color(this.opacityBar.getOpacity(), this.colorField.getColor()));
-            return true;
+            this.colorField.setColor(picker.colorField.getColor());
+            this.property.setNumber(FastColor.ARGB32.color(this.opacityBar.getOpacity(), this.colorField.getColor()));
         }
-        return false;
     }
 
     public void setARGB(int argb) {

@@ -5,25 +5,23 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import net.quepierts.experiment.nf1210.client.editor.property.Property;
 
 public class InspectorKeyBox extends InspectorModifyWidget<InputConstants.Key> {
     private boolean active = false;
     private InputConstants.Key key;
 
-    public InspectorKeyBox(Component message, Supplier<InputConstants.Key> getter, Consumer<InputConstants.Key> setter) {
-        super(22, message, getter, setter);
-        this.key = getter.get();
+    public InspectorKeyBox(Component message, Property<InputConstants.Key> property) {
+        super(22, message, property);
+        this.key = property.getObject();
     }
 
     @Override
-    public void render(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
+    protected void onRender(GuiGraphics graphics, int width, int mouseX, int mouseY, float partialTick, boolean hovered) {
         int buttonWidth = Math.min(width / 2, 100);
         int left = width - buttonWidth;
 
-        graphics.drawString(Minecraft.getInstance().font, this.message, 0, 8, 0xffffffff);
+        graphics.drawWordWrap(Minecraft.getInstance().font, this.message, 0, 8, left, 0xffffffff);
         RenderSystem.enableBlend();
 
         int hover = hovered ? mouseY / 20 : -1;
@@ -59,7 +57,7 @@ public class InspectorKeyBox extends InspectorModifyWidget<InputConstants.Key> {
         }
 
         this.key = InputConstants.getKey(keyCode, scanCode);
-        this.setter.accept(this.key);
+        this.property.setObject(this.key);
         this.active = false;
         return true;
     }
@@ -73,12 +71,10 @@ public class InspectorKeyBox extends InspectorModifyWidget<InputConstants.Key> {
     }
 
     @Override
-    public boolean paste(InspectorWidget copy) {
+    public void onPaste(InspectorWidget copy, String clipboard) {
         if (copy instanceof InspectorKeyBox box) {
             this.key = box.key;
-            this.setter.accept(this.key);
-            return true;
+            this.property.setObject(this.key);
         }
-        return false;
     }
 }

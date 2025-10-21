@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.quepierts.experiment.nf1210.client.editor.Inspectable;
+import net.quepierts.experiment.nf1210.client.editor.inspector.Inspectable;
 import net.quepierts.experiment.nf1210.client.editor.inspector.InspectorBuilder;
 import net.quepierts.experiment.nf1210.client.editor.inspector.InspectorWidget;
 import org.jetbrains.annotations.NotNull;
@@ -249,8 +249,13 @@ public class Inspector extends AbstractWidget {
             if (Screen.isCopy(keyCode)) {
                 this.copy = this.focus;
                 return true;
-            } else if (this.copy != null && Screen.isPaste(keyCode)) {
-                this.focus.paste(this.copy);
+            } else if (Screen.isPaste(keyCode)) {
+                String clipboard = Minecraft.getInstance().keyboardHandler.getClipboard();
+                if (this.copy != null) {
+                    this.focus.onPaste(this.copy, clipboard);
+                } else {
+                    this.focus.onPaste(clipboard);
+                }
                 return true;
             }
         }
@@ -260,7 +265,7 @@ public class Inspector extends AbstractWidget {
     @Override
     public boolean charTyped(char codePoint, int modifiers) {
         if (this.focus != null) {
-            return this.focus.charTyped(codePoint, modifiers);
+            return this.focus.onCharTyped(codePoint, modifiers);
         }
         return false;
     }

@@ -1,12 +1,13 @@
 package net.quepierts.experiment.nf1210.client.render;
 
 import lombok.Getter;
+import net.quepierts.experiment.nf1210.Closeable;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 
 @Getter
-public class CloudChunk implements AutoCloseable {
+public class CloudChunk implements Closeable {
 
     public static final int CHUNK_SIZE = 16;
     public static final int VOXEL_SIZE = 1;
@@ -105,12 +106,16 @@ public class CloudChunk implements AutoCloseable {
         return this.occupancy == 0;
     }
 
+    public boolean isFull() {
+        return this.occupancy == BUFFER_SIZE;
+    }
+
     public void clearDirty() {
         this.dirty = false;
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         MemoryUtil.memFree(this.buffer);
     }
 }

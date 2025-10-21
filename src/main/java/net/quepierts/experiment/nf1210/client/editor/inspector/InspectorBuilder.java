@@ -4,10 +4,11 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;
 import net.quepierts.experiment.nf1210.client.editor.DisplayableType;
+import net.quepierts.experiment.nf1210.client.editor.property.FloatProperty;
+import net.quepierts.experiment.nf1210.client.editor.property.IntegerProperty;
+import net.quepierts.experiment.nf1210.client.editor.property.Property;
 
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public class InspectorBuilder {
@@ -28,28 +29,33 @@ public class InspectorBuilder {
         return this;
     }
 
-    public <T extends DisplayableType> InspectorBuilder enumBox(Component message, Supplier<T> getter, Consumer<T> setter, T[] values) {
-        this.builder.add(new InspectorEnumBox<>(message, getter, setter, values));
+    public <T extends DisplayableType> InspectorBuilder enumBox(Component message, Property<T> property, T[] values) {
+        this.builder.add(new InspectorEnumBox<>(message, property, values));
         return this;
     }
 
-    public InspectorBuilder keyInputBox(Component message, Supplier<InputConstants.Key> getter, Consumer<InputConstants.Key> setter) {
-        this.builder.add(new InspectorKeyBox(message, getter, setter));
+    public InspectorBuilder keyInputBox(Component message, Property<InputConstants.Key> property) {
+        this.builder.add(new InspectorKeyBox(message, property));
         return this;
     }
 
-    public InspectorBuilder intSlider(Component message, Supplier<Integer> getter, Consumer<Integer> setter, int min, int max, int step) {
-        this.builder.add(new InspectorIntegerSlider(message, getter, setter, min, max, step));
+    public InspectorBuilder intSlider(Component message, IntegerProperty property, int min, int max, int step) {
+        this.builder.add(new InspectorIntegerSlider(message, property, min, max, step));
         return this;
     }
 
-    public InspectorBuilder editBox(Component message, Supplier<String> getter, Consumer<String> setter) {
-        this.builder.add(new InspectorEditBox(message, getter, setter));
+    public InspectorBuilder floatSlider(Component message, FloatProperty property, float min, float max, float step) {
+        this.builder.add(new InspectorFloatSlider(message, property, min, max, step));
         return this;
     }
 
-    public InspectorBuilder colorPicker(Component message, Supplier<Integer> getter, Consumer<Integer> setter) {
-        this.builder.add(new InspectorColorPicker(message, getter, setter));
+    public InspectorBuilder editBox(Component message, Property<String> property) {
+        this.builder.add(new InspectorEditBox(message, property));
+        return this;
+    }
+
+    public InspectorBuilder colorPicker(Component message, IntegerProperty property) {
+        this.builder.add(new InspectorColorPicker(message, property));
         return this;
     }
 

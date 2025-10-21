@@ -5,11 +5,14 @@
         "dstrgb": "1-srcalpha"
     },
     "vertex": "blit_screen",
-    "fragment": "experiment:combine",
+    "fragment": "experiment:combine_legacy",
     "samplers": [
-        { "name": "uScreenSampler" },
-        { "name": "uDiffuseSampler" }
+        { "name": "uDiffuseSampler" },
+        { "name": "uDepthSampler" },
+        { "name": "uNoiseSampler" }
     ],
     "uniforms": [
+        { "name": "uDiffuseResolution", "type": "float", "count": 2, "values": [ 1.0, 1.0 ]},
+        { "name": "uTargetResolution", "type": "float", "count": 2, "values": [ 1.0, 1.0 ]}
     ]
 }

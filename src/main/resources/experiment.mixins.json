@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
+    "accessor.client.NativeImageAccessor",
     "client.MinecraftClientMixin"
   ],
   "injectors": {

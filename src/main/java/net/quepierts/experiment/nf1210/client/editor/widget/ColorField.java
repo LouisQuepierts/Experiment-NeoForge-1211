@@ -118,7 +118,7 @@ public class ColorField extends AbstractWidget {
         int right = left + scale;
         int bottom = top + scale;
 
-        EditorShaders.COLOR_FIELD.use();
+        RenderSystem.setShader(EditorShaders.COLOR_FIELD::getInstance);
 
         Matrix4f matrix4f = graphics.pose().last().pose();
         BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
